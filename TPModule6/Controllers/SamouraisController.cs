@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using BO;
 using TPModule6.Data;
+using TPModule6.Models;
 
 namespace TPModule6.Controllers
 {
@@ -24,6 +25,9 @@ namespace TPModule6.Controllers
         // GET: Samourais/Details/5
         public ActionResult Details(int? id)
         {
+
+            DojoViewModel dvm = new DojoViewModel();
+            dvm.samourai = db.Samourais.FirstOrDefault(x => x.Id == id);
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -33,13 +37,18 @@ namespace TPModule6.Controllers
             {
                 return HttpNotFound();
             }
-            return View(samourai);
+            return View(dvm);
         }
 
         // GET: Samourais/Create
         public ActionResult Create()
         {
-            return View();
+            //créer liste arme et la retourner
+
+            DojoViewModel dvm = new DojoViewModel();
+            dvm.Armes = db.Armes.Select(x => new SelectListItem() { Text = x.Nom, Value = x.Id.ToString() }).ToList();
+
+            return View(dvm);
         }
 
         // POST: Samourais/Create
@@ -47,31 +56,39 @@ namespace TPModule6.Controllers
         // plus de détails, voir  https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Force,Nom")] Samourai samourai)
+        public ActionResult Create(DojoViewModel dvm)
         {
             if (ModelState.IsValid)
             {
+                //récupérer, rattaché l'armeId au samourai
+                Samourai samourai = dvm.samourai;
+                samourai.Arme = db.Armes.Find(dvm.IdArmes);
                 db.Samourais.Add(samourai);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(samourai);
+            return View(dvm);
         }
 
         // GET: Samourais/Edit/5
         public ActionResult Edit(int? id)
         {
+            DojoViewModel dvm = new DojoViewModel();
+            dvm.Armes = db.Armes.Select(x => new SelectListItem() { Text = x.Nom, Value = x.Id.ToString() }).ToList(); // retourne la liste complète d'armes
+
+            dvm.samourai = db.Samourais.Find(id);
+            dvm.IdArmes = dvm.samourai.Arme.Id;   // récupère et affiche l'arme sélectionnée
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Samourai samourai = db.Samourais.Find(id);
-            if (samourai == null)
+            if (dvm.samourai == null)
             {
                 return HttpNotFound();
             }
-            return View(samourai);
+            return View(dvm);
         }
 
         // POST: Samourais/Edit/5
@@ -79,7 +96,7 @@ namespace TPModule6.Controllers
         // plus de détails, voir  https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Force,Nom")] Samourai samourai)
+        public ActionResult Edit(Samourai samourai)
         {
             if (ModelState.IsValid)
             {

@@ -1,0 +1,40 @@
+﻿@model TPModule6.Models.DojoViewModel
+
+
+<h4>Samourai</h4>
+<hr />
+
+<div class="form-group">
+    @Html.LabelFor(model => model.samourai.Nom, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.samourai.Nom, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.samourai.Nom, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.samourai.Force, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.samourai.Force, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.samourai.Force, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Armes, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @if (Model.Armes != null && Model.Armes.Count > 0)
+        {
+            @Html.DropDownListFor(model => model.IdArmes, Model.Armes,"Sélectionner une arme", new { htmlAttributes = new { @class = "form-control" } })
+        }
+        else
+        {
+            @Html.DisplayFor(model => model.samourai.Arme.Nom)
+        }
+
+
+        @Html.ValidationMessageFor(model => model.Armes, "", new { @class = "text-danger" })
+
+    </div>
+</div>
+
