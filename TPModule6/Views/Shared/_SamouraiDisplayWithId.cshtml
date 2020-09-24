@@ -2,7 +2,7 @@
 
 
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-@Html.HiddenFor(model => model.samourai.Id)
+@Html.HiddenFor(model => model.samourai.Id) <!--Permet de récupérer le samourai sélectionné-->
 
 @Html.Partial("_SamouraiDisplay")
 
