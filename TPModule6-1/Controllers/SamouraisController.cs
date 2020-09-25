@@ -42,7 +42,9 @@ namespace TPModule6_1.Controllers
         public ActionResult Create()
         {
             SamouraiViewModel vm = new SamouraiViewModel();
-            vm.Armes = db.Armes.ToList();
+            //une arme ne peut appartenir qu’à un seul samourai
+            vm.Armes = db.Armes.Where(x => !db.Samourais.Select(y => y.Arme.Id).Contains(x.Id)).ToList();
+            
             vm.ArtMartiaux = db.ArtMartials.ToList();
             return View(vm);
         }
@@ -86,7 +88,9 @@ namespace TPModule6_1.Controllers
             SamouraiViewModel vm = new SamouraiViewModel();
             //vm.Samourai = db.Samourais.Include(x => x.Arme).FirstOrDefault(x => x.Id == id);
             vm.Samourai = db.Samourais.Find(id);
-            vm.Armes = db.Armes.ToList();
+
+            //une arme ne peut appartenir qu’à un seul samourai
+            vm.Armes = db.Armes.Where(x => !db.Samourais.Where(z => z.Id != vm.Samourai.Id).Select(y => y.Arme.Id).Contains(x.Id)).ToList();
             vm.ArtMartiaux = db.ArtMartials.ToList();
 
             if (vm.Samourai == null)
@@ -161,6 +165,8 @@ namespace TPModule6_1.Controllers
             }
             return View(samourai);
         }
+
+        // vm.Armes = db.Armes.Where(x => !db.Samourais.Where(z => z.Id != vm.Samourai.Id).Select(y => y.Arme.Id).Contains(x.Id)).ToList();
 
         // POST: Samourais/Delete/5
         [HttpPost, ActionName("Delete")]
